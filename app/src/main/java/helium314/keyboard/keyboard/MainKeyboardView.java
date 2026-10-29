@@ -305,7 +305,15 @@ public final class MainKeyboardView extends KeyboardView implements DrawingProxy
     public void setKeyboard(@NonNull final Keyboard keyboard) {
         // Remove any pending messages, except dismissing preview and key repeat.
         mTimerHandler.cancelLongPressTimers();
+        final Keyboard oldKeyboard = getKeyboard();
         super.setKeyboard(keyboard);
+        // Night City: animate the shift key when the shift state changes
+        if (mCyberRenderer != null && oldKeyboard != null && oldKeyboard.mId.getElement() != keyboard.mId.getElement()
+                && oldKeyboard.mId.getElement().isAlphaOrSymbol() && keyboard.mId.getElement().isAlphaOrSymbol()) {
+            for (final Key k : keyboard.getSortedKeys()) {
+                if (k.isShift()) startKeyPulse(k);
+            }
+        }
         mKeyDetector.setKeyboard(
                 keyboard, -getPaddingLeft(), -getPaddingTop() + getVerticalCorrection());
         PointerTracker.setKeyDetector(mKeyDetector);
@@ -389,6 +397,7 @@ public final class MainKeyboardView extends KeyboardView implements DrawingProxy
     public void onKeyReleased(@NonNull final Key key, final boolean withAnimation) {
         key.onReleased();
         invalidateKey(key);
+        startKeyPulse(key); // Night City release pulse, purely visual (input is already handled)
         if (key.hasPreview()) {
             if (withAnimation) {
                 dismissKeyPreview(key);
@@ -680,6 +689,7 @@ public final class MainKeyboardView extends KeyboardView implements DrawingProxy
             KeyPreviewView.clearTextCache();
         }
         mLanguageOnSpacebarFormatType = languageOnSpacebarFormatType;
+        if (subtypeChanged) startKeyPulse(mSpaceKey); // Night City: language indicator pulse
         mHasMultipleEnabledIMEsOrSubtypes = hasMultipleEnabledIMEsOrSubtypes;
         final ObjectAnimator animator = mLanguageOnSpacebarFadeoutAnimator;
         if (animator == null) {

@@ -20,6 +20,9 @@ import helium314.keyboard.latin.common.ColorType
 import helium314.keyboard.latin.common.Colors
 import helium314.keyboard.latin.common.DefaultColors
 import helium314.keyboard.latin.common.DynamicColors
+import helium314.keyboard.latin.common.NightCityColors
+import helium314.keyboard.latin.common.NightCityFxLevel
+import helium314.keyboard.latin.common.NightCityPalette
 import helium314.keyboard.latin.settings.Defaults
 import helium314.keyboard.latin.settings.Settings
 import helium314.keyboard.latin.utils.ResourceUtils
@@ -65,7 +68,12 @@ private constructor(val themeId: Int, @JvmField val mStyleId: Int) {
         const val THEME_PINK = "pink"
         const val THEME_SAND = "sand"
         const val THEME_VIOLETTE = "violette"
+        // Night City Keyboard themes
+        const val THEME_NIGHT_CITY = NightCityPalette.NIGHT_CITY
+        const val THEME_AFTERLIFE = NightCityPalette.AFTERLIFE
+        const val THEME_NETRUNNER = NightCityPalette.NETRUNNER
         fun getAvailableDefaultColors(prefs: SharedPreferences, isNight: Boolean) = listOfNotNull(
+            THEME_NIGHT_CITY, THEME_AFTERLIFE, THEME_NETRUNNER,
             if (!isNight) THEME_LIGHT else null, THEME_DARK,
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) THEME_DYNAMIC else null,
             if (prefs.getString(Settings.PREF_THEME_STYLE, Defaults.PREF_THEME_STYLE) == STYLE_HOLO) THEME_HOLO_WHITE else null,
@@ -147,6 +155,18 @@ private constructor(val themeId: Int, @JvmField val mStyleId: Int) {
         private fun getThemeColors(themeName: String, themeStyle: String, context: Context, prefs: SharedPreferences, isNight: Boolean): Colors {
             val hasBorders = prefs.getBoolean(Settings.PREF_THEME_KEY_BORDERS, Defaults.PREF_THEME_KEY_BORDERS)
             val backgroundImage = Settings.readUserBackgroundImage(context, isNight)
+            NightCityPalette.forId(themeName)?.let { palette ->
+                return NightCityColors(
+                    palette,
+                    themeStyle,
+                    hasBorders,
+                    backgroundImage,
+                    NightCityFxLevel.factor(prefs.getString(Settings.PREF_NC_EFFECT_LEVEL, Defaults.PREF_NC_EFFECT_LEVEL)),
+                    prefs.getBoolean(Settings.PREF_NC_TECH_DECOR, Defaults.PREF_NC_TECH_DECOR),
+                    prefs.getBoolean(Settings.PREF_NC_SUGGESTION_FRAME, Defaults.PREF_NC_SUGGESTION_FRAME),
+                    prefs.getBoolean(Settings.PREF_NC_ANIMATIONS, Defaults.PREF_NC_ANIMATIONS),
+                )
+            }
             return when (themeName) {
                 THEME_DYNAMIC -> {
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) DynamicColors(context, themeStyle, hasBorders, backgroundImage)

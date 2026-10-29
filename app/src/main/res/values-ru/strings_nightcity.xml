@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- SPDX-License-Identifier: GPL-3.0-only -->
+<resources>
+    <string name="nc_tagline">Приватная клавиатура в стиле киберпанк. Без сети и слежки.</string>
+    <string name="nc_status_label">SYS.STATUS</string>
+    <string name="nc_status_enabled">Включена в системе</string>
+    <string name="nc_status_not_enabled">Не включена в системе</string>
+    <string name="nc_status_default">Активная клавиатура</string>
+    <string name="nc_status_not_default">Не выбрана по умолчанию</string>
+    <string name="nc_enable_button">Включить</string>
+    <string name="nc_select_button">Выбрать клавиатуру</string>
+    <string name="nc_preview_title">Предпросмотр</string>
+    <string name="nc_preview_note">Статичный предпросмотр активной темы. Чтобы проверить настоящую клавиатуру, нажмите на поле ниже.</string>
+    <string name="nc_test_input_hint">Нажмите, чтобы проверить ввод</string>
+    <string name="nc_theme_title">Визуальный профиль</string>
+    <string name="nc_theme_desc_night_city">Чёрный, жёлтый, бирюзовый. Основной стиль.</string>
+    <string name="nc_theme_desc_afterlife">Глубокий чёрный, минимум границ.</string>
+    <string name="nc_theme_desc_netrunner">Бирюзовые технические линии.</string>
+    <string name="settings_category_nc_visual">Оформление Night City</string>
+    <string name="settings_category_nc_animations">Анимации</string>
+    <string name="nc_effect_level">Интенсивность эффектов</string>
+    <string name="nc_effect_minimal">Минимальная (без свечения и декора)</string>
+    <string name="nc_effect_standard">Стандартная</string>
+    <string name="nc_effect_max">Максимальная</string>
+    <string name="nc_animations">Анимации клавиш</string>
+    <string name="nc_animations_summary">Короткий импульс при отпускании, индикаторы Shift и языка, плавное появление панелей</string>
+    <string name="nc_tech_decor">Технические элементы</string>
+    <string name="nc_tech_decor_summary">Угловые метки, полосы на Enter, маркеры на пробеле и панели</string>
+    <string name="nc_suggestion_frame">Рамка строки подсказок</string>
+    <string name="nc_suggestion_frame_summary">Тонкая линия и маркеры состояния под подсказками</string>
+    <string name="nc_about_origin">Night City Keyboard — модификация HeliBoard (GPL-3.0). Исходный проект: github.com/HeliBorg/HeliBoard. Не связана с CD PROJEKT RED.</string>
+    <string name="nc_open_settings">Все настройки</string>
+</resources>

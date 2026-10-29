@@ -179,6 +179,7 @@ public class PopupKeysKeyboardView extends KeyboardView implements PopupKeysPane
         mOriginX = panelFinalX;
         mOriginY = y + container.getPaddingTop() + (int) getY();
         controller.onShowPopupKeysPanel(this);
+        CyberKeyRenderer.fadeIn(container, 90);
         final PopupKeysKeyboardAccessibilityDelegate accessibilityDelegate = mAccessibilityDelegate;
         if (accessibilityDelegate != null
                 && AccessibilityUtils.Companion.getInstance().isAccessibilityEnabled()) {

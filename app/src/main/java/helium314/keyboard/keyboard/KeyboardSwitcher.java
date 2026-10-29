@@ -652,6 +652,7 @@ public final class KeyboardSwitcher {
             mEmojiPalettesView.startEmojiPalettes(mKeyboardView.getKeyVisualAttribute(),
                 mLatinIME.getCurrentInputEditorInfo(), mLatinIME.mKeyboardActionListener);
             mEmojiPalettesView.setVisibility(View.VISIBLE);
+            CyberKeyRenderer.fadeIn(mEmojiPalettesView, 120);
         }
 
         @Override
@@ -673,6 +674,7 @@ public final class KeyboardSwitcher {
             mClipboardHistoryView.startClipboardHistory(mLatinIME.getClipboardHistoryManager(), mKeyboardView.getKeyVisualAttribute(),
                 mLatinIME.getCurrentInputEditorInfo(), mLatinIME.mKeyboardActionListener);
             mClipboardHistoryView.setVisibility(View.VISIBLE);
+            CyberKeyRenderer.fadeIn(mClipboardHistoryView, 120);
         }
 
         @Override

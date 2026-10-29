@@ -843,6 +843,11 @@ public class Key implements Comparable<Key> {
         mPressed = false;
     }
 
+    /** true while the key is pressed or locked (e.g. sticky modifier); used by the Night City renderer */
+    public final boolean isPressedOrLocked() {
+        return mPressed || mLocked;
+    }
+
     public final boolean isEnabled() {
         return mEnabled;
     }

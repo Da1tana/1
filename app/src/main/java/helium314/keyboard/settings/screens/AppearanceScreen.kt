@@ -20,6 +20,7 @@ import helium314.keyboard.keyboard.KeyboardTheme
 import helium314.keyboard.keyboard.internal.KeyboardIconsSet
 import helium314.keyboard.latin.R
 import helium314.keyboard.latin.settings.Defaults
+import helium314.keyboard.latin.common.NightCityFxLevel
 import helium314.keyboard.latin.utils.Log
 import helium314.keyboard.latin.utils.getActivity
 import helium314.keyboard.latin.utils.getStringResourceOrName
@@ -57,16 +58,22 @@ fun AppearanceScreen(
         Log.v("irrelevant", "stupid way to trigger recomposition on preference change")
     val dayNightMode = Build.VERSION.SDK_INT >= Build.VERSION_CODES.P && prefs.getBoolean(Settings.PREF_THEME_DAY_NIGHT, Defaults.PREF_THEME_DAY_NIGHT)
     val items = listOf(
+        R.string.settings_category_nc_visual,
+        Settings.PREF_THEME_COLORS,
+        if (dayNightMode) Settings.PREF_THEME_COLORS_NIGHT else null,
+        Settings.PREF_NC_EFFECT_LEVEL,
+        Settings.PREF_THEME_KEY_BORDERS,
+        Settings.PREF_NC_TECH_DECOR,
+        Settings.PREF_NC_SUGGESTION_FRAME,
+        R.string.settings_category_nc_animations,
+        Settings.PREF_NC_ANIMATIONS,
         R.string.settings_screen_theme,
         Settings.PREF_THEME_STYLE,
         Settings.PREF_ICON_STYLE,
         Settings.PREF_ACCENT_SHIFTED_ICON,
         Settings.PREF_CUSTOM_ICON_NAMES,
-        Settings.PREF_THEME_KEY_BORDERS,
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P)
             Settings.PREF_THEME_DAY_NIGHT else null,
-        Settings.PREF_THEME_COLORS,
-        if (dayNightMode) Settings.PREF_THEME_COLORS_NIGHT else null,
         Settings.PREF_NAVBAR_COLOR,
         SettingsWithoutKey.BACKGROUND_IMAGE,
         SettingsWithoutKey.BACKGROUND_IMAGE_LANDSCAPE,
@@ -78,8 +85,7 @@ fun AppearanceScreen(
             || prefs.getBoolean(Settings.PREF_ENABLE_SPLIT_KEYBOARD_FOLDED_LANDSCAPE, Defaults.PREF_ENABLE_SPLIT_KEYBOARD)
             )
             Settings.PREF_SPLIT_SPACER_SCALE_PREFIX else null,
-        if (prefs.getBoolean(Settings.PREF_THEME_KEY_BORDERS, Defaults.PREF_THEME_KEY_BORDERS))
-            Settings.PREF_KEY_GAP_SCALE_PREFIX else null,
+        Settings.PREF_KEY_GAP_SCALE_PREFIX, // Night City: key spacing matters with and without borders
         Settings.PREF_KEYBOARD_HEIGHT_SCALE_PREFIX,
         Settings.PREF_BOTTOM_ROW_SCALE_PREFIX,
         Settings.PREF_BOTTOM_PADDING_SCALE_PREFIX,
@@ -103,6 +109,23 @@ fun AppearanceScreen(
 }
 
 fun createAppearanceSettings(context: Context) = listOf(
+    Setting(context, Settings.PREF_NC_EFFECT_LEVEL, R.string.nc_effect_level) { setting ->
+        val items = listOf(
+            stringResource(R.string.nc_effect_minimal) to NightCityFxLevel.MINIMAL,
+            stringResource(R.string.nc_effect_standard) to NightCityFxLevel.STANDARD,
+            stringResource(R.string.nc_effect_max) to NightCityFxLevel.MAX,
+        )
+        ListPreference(setting, items, Defaults.PREF_NC_EFFECT_LEVEL) { KeyboardSwitcher.getInstance().setThemeNeedsReload() }
+    },
+    Setting(context, Settings.PREF_NC_ANIMATIONS, R.string.nc_animations, R.string.nc_animations_summary) {
+        SwitchPreference(it, Defaults.PREF_NC_ANIMATIONS) { KeyboardSwitcher.getInstance().setThemeNeedsReload() }
+    },
+    Setting(context, Settings.PREF_NC_TECH_DECOR, R.string.nc_tech_decor, R.string.nc_tech_decor_summary) {
+        SwitchPreference(it, Defaults.PREF_NC_TECH_DECOR) { KeyboardSwitcher.getInstance().setThemeNeedsReload() }
+    },
+    Setting(context, Settings.PREF_NC_SUGGESTION_FRAME, R.string.nc_suggestion_frame, R.string.nc_suggestion_frame_summary) {
+        SwitchPreference(it, Defaults.PREF_NC_SUGGESTION_FRAME) { KeyboardSwitcher.getInstance().setThemeNeedsReload() }
+    },
     Setting(context, Settings.PREF_THEME_STYLE, R.string.theme_style) { setting ->
         val ctx = LocalContext.current
         val prefs = ctx.prefs()

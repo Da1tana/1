@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- SPDX-License-Identifier: GPL-3.0-only -->
+<!-- Night City Keyboard strings -->
+<resources>
+    <string name="theme_name_night_city" translatable="false">Night City</string>
+    <string name="theme_name_afterlife" translatable="false">Afterlife</string>
+    <string name="theme_name_netrunner" translatable="false">Netrunner</string>
+    <string name="nc_tagline">Private cyberpunk keyboard. No network, no tracking.</string>
+    <string name="nc_status_label">SYS.STATUS</string>
+    <string name="nc_status_enabled">Enabled in system</string>
+    <string name="nc_status_not_enabled">Not enabled in system</string>
+    <string name="nc_status_default">Active keyboard</string>
+    <string name="nc_status_not_default">Not the active keyboard</string>
+    <string name="nc_enable_button">Enable</string>
+    <string name="nc_select_button">Choose keyboard</string>
+    <string name="nc_preview_title">Preview</string>
+    <string name="nc_preview_note">Static preview of the active theme. Use the field below to try the real keyboard.</string>
+    <string name="nc_test_input_hint">Tap to test typing</string>
+    <string name="nc_theme_title">Visual profile</string>
+    <string name="nc_theme_desc_night_city">Black, yellow, teal. The main look.</string>
+    <string name="nc_theme_desc_afterlife">Deeper black, minimal borders.</string>
+    <string name="nc_theme_desc_netrunner">Teal technical lines.</string>
+    <string name="settings_category_nc_visual">Night City visuals</string>
+    <string name="settings_category_nc_animations">Animations</string>
+    <string name="nc_effect_level">Effect intensity</string>
+    <string name="nc_effect_minimal">Minimal (no glow and decor)</string>
+    <string name="nc_effect_standard">Standard</string>
+    <string name="nc_effect_max">Maximum</string>
+    <string name="nc_animations">Key animations</string>
+    <string name="nc_animations_summary">Short release pulse, shift and language indicators, panel fade-in</string>
+    <string name="nc_tech_decor">Technical decorations</string>
+    <string name="nc_tech_decor_summary">Corner ticks, stripes on Enter, markers on the space bar and panel</string>
+    <string name="nc_suggestion_frame">Suggestion strip frame</string>
+    <string name="nc_suggestion_frame_summary">Thin line and status markers under the suggestions</string>
+    <string name="nc_about_origin">Night City Keyboard is a modification of HeliBoard (GPL-3.0). Original project: github.com/HeliBorg/HeliBoard. Not affiliated with CD PROJEKT RED.</string>
+    <string name="nc_open_settings">All settings</string>
+</resources>

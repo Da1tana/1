@@ -22,6 +22,11 @@ import helium314.keyboard.latin.utils.SubtypeLocaleUtils.displayName
 import helium314.keyboard.latin.utils.SubtypeSettings
 import helium314.keyboard.latin.utils.NextScreenIcon
 import helium314.keyboard.settings.SearchSettingsScreen
+import helium314.keyboard.settings.NightCityHeader
+import helium314.keyboard.settings.NightCityKeyboardPreview
+import helium314.keyboard.settings.NightCityTestField
+import helium314.keyboard.settings.NightCityThemePicker
+import helium314.keyboard.settings.preferences.PreferenceCategory
 import helium314.keyboard.latin.utils.Theme
 import helium314.keyboard.settings.initPreview
 import helium314.keyboard.settings.preferences.Preference
@@ -54,6 +59,11 @@ fun MainSettingsScreen(
             Column(
                 Modifier.verticalScroll(rememberScrollState()).then(Modifier.padding(innerPadding))
             ) {
+                NightCityHeader()
+                NightCityThemePicker()
+                NightCityKeyboardPreview()
+                NightCityTestField()
+                PreferenceCategory(stringResource(R.string.nc_open_settings))
                 Preference(
                     name = stringResource(R.string.language_and_layouts_title),
                     description = enabledSubtypes.joinToString(", ") { it.displayName() },

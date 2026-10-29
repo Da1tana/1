@@ -35,6 +35,7 @@ import helium314.keyboard.latin.R;
 import helium314.keyboard.latin.common.ColorType;
 import helium314.keyboard.latin.common.Colors;
 import helium314.keyboard.latin.common.Constants;
+import helium314.keyboard.latin.common.NightCityColors;
 import helium314.keyboard.latin.common.StringUtilsKt;
 import helium314.keyboard.latin.settings.Settings;
 import helium314.keyboard.latin.suggestions.MoreSuggestions;
@@ -65,6 +66,11 @@ public class KeyboardView extends View {
     private final Rect mKeyBackgroundPadding = new Rect();
     private static final float KET_TEXT_SHADOW_RADIUS_DISABLED = -1.0f;
     private final Colors mColors;
+    /** Night City renderer, null for the original HeliBoard themes */
+    @Nullable
+    protected final CyberKeyRenderer mCyberRenderer;
+    private final Runnable mPulseFrame = this::onPulseFrame;
+    private boolean mPulseScheduled;
     private float mKeyScaleForText;
     protected float mFontSizeMultiplier;
     protected float mHintFontSizeMultiplier;
@@ -106,6 +112,9 @@ public class KeyboardView extends View {
     public KeyboardView(final Context context, final AttributeSet attrs, final int defStyle) {
         super(context, attrs, defStyle);
         mColors = Settings.getValues().mColors;
+        mCyberRenderer = mColors instanceof NightCityColors
+                ? new CyberKeyRenderer((NightCityColors) mColors, context.getResources().getDisplayMetrics().density)
+                : null;
 
         final TypedArray keyboardViewAttr = context.obtainStyledAttributes(attrs,
                 R.styleable.KeyboardView, defStyle, R.style.KeyboardView);
@@ -184,6 +193,7 @@ public class KeyboardView extends View {
         }
 
         mKeyboard = keyboard;
+        if (mCyberRenderer != null) mCyberRenderer.clearPulses();
         mKeyScaleForText = (float) Math.sqrt(1 / Settings.getValues().mKeyboardHeightScale);
         int scale = Math.min(2 * keyboard.mMostCommonKeyWidth, keyboard.mMostCommonKeyHeight - keyboard.mVerticalGap);
         int scaledKeySize = (int) (scale * mKeyScaleForText);
@@ -325,6 +335,35 @@ public class KeyboardView extends View {
 
         mInvalidatedKeys.clear();
         mInvalidateAllKeys = false;
+        if (mCyberRenderer != null && mCyberRenderer.hasActivePulses() && !mPulseScheduled) {
+            mPulseScheduled = true;
+            postOnAnimation(mPulseFrame);
+        }
+    }
+
+    private void onPulseFrame() {
+        mPulseScheduled = false;
+        if (mCyberRenderer == null || !mCyberRenderer.hasActivePulses()) return;
+        for (final Key key : new java.util.ArrayList<>(mCyberRenderer.activePulseKeys())) {
+            invalidateKey(key);
+        }
+        if (mInvalidateAllKeys) invalidate();
+    }
+
+    /** Starts the short Night City release pulse on the key (no-op for other themes or with animations off). */
+    protected void startKeyPulse(@Nullable final Key key) {
+        if (key == null || mCyberRenderer == null || !mCyberRenderer.getAnimationsEnabled()) return;
+        mCyberRenderer.startPulse(key);
+        invalidateKey(key);
+    }
+
+    /** 0 = no shift state, 1 = shifted, 2 = caps lock; only meaningful for shift keys */
+    private int shiftStateFor(@NonNull final Key key) {
+        if (!key.isShift() || mKeyboard == null) return 0;
+        final KeyboardElement element = mKeyboard.mId.getElement();
+        if (element == KeyboardElement.ALPHABET_SHIFT_LOCKED) return 2;
+        if (element == KeyboardElement.ALPHABET_MANUAL_SHIFTED || element == KeyboardElement.SYMBOLS_SHIFTED) return 1;
+        return 0;
     }
 
     private void onDrawKey(@NonNull final Key key, @NonNull final Canvas canvas,
@@ -353,6 +392,16 @@ public class KeyboardView extends View {
             @NonNull final Drawable background) {
         final int keyWidth = key.getDrawWidth();
         final int keyHeight = key.getHeight();
+        if (mCyberRenderer != null) {
+            // bounds are still needed for label scaling in onDrawKeyTopVisuals
+            background.setBounds(0, 0, keyWidth, keyHeight);
+            final CyberKeyRenderer.Variant variant = (this instanceof PopupKeysKeyboardView || this instanceof MoreSuggestionsView)
+                    ? CyberKeyRenderer.Variant.POPUP
+                    : (this instanceof EmojiPageKeyboardView ? CyberKeyRenderer.Variant.EMOJI : CyberKeyRenderer.Variant.MAIN);
+            mCyberRenderer.drawKey(canvas, key, keyWidth, keyHeight, key.isPressedOrLocked(),
+                    shiftStateFor(key), mCyberRenderer.pulseFor(key), variant);
+            return;
+        }
         final int bgWidth, bgHeight, bgX, bgY;
         if (key.needsToKeepBackgroundAspectRatio(mDefaultKeyLabelFlags)
                 // HACK: To disable expanding normal/functional key background.
