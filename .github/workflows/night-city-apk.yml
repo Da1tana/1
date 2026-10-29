@@ -1,0 +1,80 @@
+name: Night City Keyboard APK
+
+on:
+  push:
+    branches: [ night-city-keyboard ]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - uses: gradle/actions/setup-gradle@v3
+
+      - name: Build debug APK
+        run: |
+          chmod +x gradlew
+          ./gradlew assembleDebug --stacktrace
+
+      - name: APK info
+        run: |
+          ls -la app/build/outputs/apk/debug/
+          AAPT=$(ls $ANDROID_HOME/build-tools/*/aapt2 | tail -1)
+          $AAPT dump badging app/build/outputs/apk/debug/*.apk | head -5 || true
+          sha256sum app/build/outputs/apk/debug/*.apk
+
+      - name: Upload APK artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: NightCityKeyboard-debug
+          path: app/build/outputs/apk/debug/*.apk
+
+      - name: Publish as pre-release (easy download on the phone)
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: night-city-debug-${{ github.run_number }}
+          name: Night City Keyboard debug ${{ github.run_number }}
+          prerelease: true
+          files: app/build/outputs/apk/debug/*.apk
+          body: |
+            Debug build of Night City Keyboard (modification of HeliBoard, GPL-3.0).
+            Package: nightcity.keyboard.debug — installs next to HeliBoard.
+            Commit: ${{ github.sha }}
+
+      - name: Archive reports for failed job
+        uses: actions/upload-artifact@v4
+        with:
+          name: reports
+          path: '*/build/reports'
+        if: ${{ failure() }}
+
+  unit-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+      - uses: gradle/actions/setup-gradle@v3
+      - name: Unit tests (Robolectric)
+        run: |
+          chmod +x gradlew
+          ./gradlew testRunTestsUnitTest
+      - name: Test reports
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-reports
+          path: 'app/build/reports/tests'
+        if: ${{ always() }}
