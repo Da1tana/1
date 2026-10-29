@@ -283,21 +283,21 @@ fun NightCityKeyboardPreview() {
             val h = size.height
             // backdrop
             drawRect(androidx.compose.ui.graphics.Brush.verticalGradient(listOf(p.panel.c(), p.base.c())))
-            drawLine(p.border.c(), Offset(0f, 0f), Offset(w, 0f), 1.dp.toPx())
+            drawLine(p.border.c().copy(alpha = 0.55f), Offset(0f, 0f), Offset(w, 0f), 1.dp.toPx())
             if (decor) {
-                drawLine(p.accent.c(), Offset(0f, 1.dp.toPx()), Offset(w * 0.18f, 1.dp.toPx()), 2.dp.toPx())
-                drawLine(p.teal.c(), Offset(w - 28.dp.toPx(), 1.dp.toPx()), Offset(w - 12.dp.toPx(), 1.dp.toPx()), 2.dp.toPx())
+                drawLine(p.accent.c().copy(alpha = 0.6f), Offset(0f, 1.dp.toPx()), Offset(w * 0.08f, 1.dp.toPx()), 1.5.dp.toPx())
+                drawLine(p.teal.c().copy(alpha = 0.6f), Offset(w - 22.dp.toPx(), 1.dp.toPx()), Offset(w - 12.dp.toPx(), 1.dp.toPx()), 1.5.dp.toPx())
             }
             // suggestion strip
             val stripH = h * 0.14f
             val words = listOf("привет", "Night", "City")
             words.forEachIndexed { i, word ->
-                val color = when (i) { 1 -> p.accent; 0 -> p.teal; else -> p.functionalText }
+                val color = when (i) { 1 -> p.accent; 0 -> p.functionalText; else -> p.keyText }
                 val layout = measurer.measure(word, TextStyle(color = color.c(), fontSize = 13.sp))
                 val cx = w * (i * 2 + 1) / 6f
                 drawText(layout, topLeft = Offset(cx - layout.size.width / 2f, (stripH - layout.size.height) / 2f))
             }
-            drawLine(p.border.c(), Offset(0f, stripH), Offset(w, stripH), 1.dp.toPx())
+            
             val rows = listOf("йцукенгшщзх", "фывапролджэ", "^ячсмитьбю<", "#, ␣ .⏎")
             val keysTop = stripH + 4.dp.toPx()
             val rowH = (h - keysTop - 4.dp.toPx()) / rows.size
@@ -333,32 +333,26 @@ private fun DrawScope.previewKey(
     x: Float, y: Float, w: Float, h: Float, label: String, type: Int, p: NightCityPalette,
     borders: Boolean, decor: Boolean, measurer: androidx.compose.ui.text.TextMeasurer,
 ) {
-    val ix = 1.2.dp.toPx(); val iy = 1.6.dp.toPx()
+    val ix = 2.dp.toPx(); val iy = 2.8.dp.toPx()
     val l = x + ix; val t = y + iy; val r = x + w - ix; val b = y + h - iy
-    val cut = (minOf(r - l, b - t) * (if (type == 3) 0.26f else 0.17f)).coerceIn(2.dp.toPx(), 8.dp.toPx())
+    val rad = minOf(7.dp.toPx(), minOf(r - l, b - t) * 0.28f)
+    val cut = minOf(4.5.dp.toPx(), minOf(r - l, b - t) * 0.2f)
     val path = Path().apply {
-        moveTo(l + cut, t)
-        if (type == 3) { lineTo(r - cut * 0.6f, t); lineTo(r, t + cut * 0.6f) } else lineTo(r, t)
-        lineTo(r, b - cut); lineTo(r - cut, b); lineTo(l, b); lineTo(l, t + cut); close()
+        moveTo(l + cut, t); lineTo(r - rad, t); quadraticTo(r, t, r, t + rad)
+        lineTo(r, b - rad); quadraticTo(r, b, r - rad, b)
+        lineTo(l + rad, b); quadraticTo(l, b, l, b - rad)
+        lineTo(l, t + cut); close()
     }
     val fill = when (type) { 2 -> p.keySecondary; 3 -> p.accent; 4 -> p.spaceBar; else -> p.key }
     drawPath(path, fill.c())
-    if (borders || type == 3)
-        drawPath(path, (if (type == 3) p.accentBright else p.border).c(), style = Stroke(1.dp.toPx()))
+    if (borders && type != 3)
+        drawPath(path, p.border.c(), style = Stroke(1.dp.toPx()))
     if (decor) {
         when (type) {
-            2 -> {
-                val len = minOf(5.dp.toPx(), (r - l) * 0.2f)
-                drawLine(p.teal.c().copy(alpha = 0.7f), Offset(r - len - 2.dp.toPx(), t + 2.dp.toPx()), Offset(r - 2.dp.toPx(), t + 2.dp.toPx()), 1.2.dp.toPx())
-                drawLine(p.teal.c().copy(alpha = 0.7f), Offset(r - 2.dp.toPx(), t + 2.dp.toPx()), Offset(r - 2.dp.toPx(), t + len + 2.dp.toPx()), 1.2.dp.toPx())
-            }
+            2 -> drawCircle(p.teal.c().copy(alpha = 0.55f), 1.3.dp.toPx(), Offset(r - 4.5.dp.toPx(), t + 4.5.dp.toPx()))
             4 -> {
-                val cx = (l + r) / 2f; val tw = (r - l) * 0.22f
-                drawLine(p.accent.c().copy(alpha = 0.7f), Offset(cx - tw / 2, b - 3.dp.toPx()), Offset(cx + tw / 2, b - 3.dp.toPx()), 1.5.dp.toPx())
-            }
-            3 -> for (i in 0..2) {
-                val s = 3.5.dp.toPx(); val x0 = l + 4.dp.toPx() + i * s
-                drawLine(p.onAccent.c().copy(alpha = 0.4f), Offset(x0, b - 3.dp.toPx()), Offset(x0 + s * 0.7f, b - 3.dp.toPx() - s * 0.9f), 1.2.dp.toPx())
+                val cx = (l + r) / 2f; val tw = maxOf(18.dp.toPx(), (r - l) * 0.12f)
+                drawLine(p.accent.c().copy(alpha = 0.45f), Offset(cx - tw / 2, b - 4.dp.toPx()), Offset(cx + tw / 2, b - 4.dp.toPx()), 1.4.dp.toPx(), cap = androidx.compose.ui.graphics.StrokeCap.Round)
             }
         }
     }

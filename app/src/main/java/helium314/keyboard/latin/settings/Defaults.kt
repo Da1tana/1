@@ -49,12 +49,12 @@ object Defaults {
     const val PREF_ACCENT_SHIFTED_ICON = false
     const val PREF_THEME_COLORS = KeyboardTheme.THEME_NIGHT_CITY
     const val PREF_THEME_COLORS_NIGHT = KeyboardTheme.THEME_NIGHT_CITY
-    const val PREF_THEME_KEY_BORDERS = true
+    const val PREF_THEME_KEY_BORDERS = false
     // Night City Keyboard
     const val PREF_NC_ANIMATIONS = true
     const val PREF_NC_EFFECT_LEVEL = "standard"
-    const val PREF_NC_TECH_DECOR = true
-    const val PREF_NC_SUGGESTION_FRAME = true
+    const val PREF_NC_TECH_DECOR = false
+    const val PREF_NC_SUGGESTION_FRAME = false
     @JvmField
     val PREF_THEME_DAY_NIGHT = Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q
     const val PREF_CUSTOM_ICON_NAMES = ""

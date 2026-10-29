@@ -43,27 +43,24 @@ class CyberKeyRenderer(val colors: NightCityColors, density: Float) {
         val isFunctional = type == Key.BACKGROUND_TYPE_FUNCTIONAL
         val isSpace = type == Key.BACKGROUND_TYPE_SPACEBAR
 
-        // geometry
-        val insetX = 1.2f * d
-        val insetY = 1.6f * d
+        // geometry: airy keys, soft rounded corners and one small signature cut (top-left)
+        val insetX = 2f * d
+        val insetY = 2.8f * d
         val l = insetX
         val t = insetY
         val r = w - insetX
         val b = h - insetY
         if (r - l < 4 || b - t < 4) return
-        val cut = (min(r - l, b - t) * (if (isAction) 0.26f else 0.17f)).coerceIn(2.5f * d, 9f * d)
+        val rad = min(7f * d, min(r - l, b - t) * 0.28f)
+        val cut = min(4.5f * d, min(r - l, b - t) * 0.2f)
         path.reset()
         path.moveTo(l + cut, t)
-        if (isAction) {
-            // enter: cut top-left and top-right, more aggressive silhouette
-            path.lineTo(r - cut * 0.6f, t)
-            path.lineTo(r, t + cut * 0.6f)
-        } else {
-            path.lineTo(r, t)
-        }
-        path.lineTo(r, b - cut)
-        path.lineTo(r - cut, b)
-        path.lineTo(l, b)
+        path.lineTo(r - rad, t)
+        path.quadTo(r, t, r, t + rad)
+        path.lineTo(r, b - rad)
+        path.quadTo(r, b, r - rad, b)
+        path.lineTo(l + rad, b)
+        path.quadTo(l, b, l, b - rad)
         path.lineTo(l, t + cut)
         path.close()
 
@@ -80,97 +77,60 @@ class CyberKeyRenderer(val colors: NightCityColors, density: Float) {
         if (!transparentBase || pressed) {
             fill.color = when {
                 isAction -> baseFill
-                pressed -> ColorUtils.blendARGB(if (transparentBase) p.keySecondary else baseFill, pressAccent, 0.16f + 0.06f * fx)
-                pulse > 0f -> ColorUtils.blendARGB(baseFill, pressAccent, 0.14f * pulse)
+                pressed -> ColorUtils.blendARGB(
+                    ColorUtils.blendARGB(if (transparentBase) p.key else baseFill, 0xFFFFFFFF.toInt(), 0.08f),
+                    pressAccent, 0.10f)
+                pulse > 0f -> ColorUtils.blendARGB(baseFill, 0xFFFFFFFF.toInt(), 0.07f * pulse)
                 else -> baseFill
             }
             canvas.drawPath(path, fill)
         }
 
-        // glow under the border when active
-        val glowStrength = when {
-            pressed -> 1f
-            pulse > 0f -> pulse
-            else -> 0f
-        } * fx * p.glow
-        if (glowStrength > 0.01f && !transparentBase) {
-            val glowColor = if (isAction) p.accentBright else pressAccent
-            stroke.color = ColorUtils.setAlphaComponent(glowColor, (70 * glowStrength).toInt().coerceIn(0, 255))
-            stroke.strokeWidth = 4.5f * d
-            canvas.drawPath(path, stroke)
-            stroke.color = ColorUtils.setAlphaComponent(glowColor, (45 * glowStrength).toInt().coerceIn(0, 255))
-            stroke.strokeWidth = 6.5f * d
+        // soft glow only at maximum intensity
+        if (fx > 1f && (pressed || pulse > 0f) && !transparentBase) {
+            val strength = (if (pressed) 1f else pulse) * p.glow
+            stroke.color = ColorUtils.setAlphaComponent(if (isAction) p.accentBright else pressAccent, (45 * strength).toInt().coerceIn(0, 255))
+            stroke.strokeWidth = 3f * d
             canvas.drawPath(path, stroke)
         }
 
-        // border
+        // borders: only when enabled by the user, or to show an active shift / press
         val borderColor = when {
-            isAction -> if (pressed) p.accentBright else ColorUtils.blendARGB(p.accent, p.accentBright, 0.4f)
-            pressed -> pressAccent
             shiftState > 0 -> p.accent
-            pulse > 0f -> ColorUtils.blendARGB(p.border, pressAccent, pulse)
+            pressed -> ColorUtils.setAlphaComponent(pressAccent, 0xB0)
             else -> p.border
         }
-        val drawBorder = colors.hasKeyBorders || pressed || shiftState > 0 || pulse > 0f || isAction
+        val drawBorder = !isAction && (colors.hasKeyBorders || shiftState > 0 || (pressed && fx > 0f))
         if (drawBorder && (!transparentBase || pressed)) {
             stroke.color = borderColor
-            stroke.strokeWidth = (if (pressed || shiftState > 0) 1.4f else 1f) * d
+            stroke.strokeWidth = (if (shiftState > 0) 1.3f else 1f) * d
             canvas.drawPath(path, stroke)
         }
 
         if (variant != Variant.MAIN) return
 
-        // subtle top highlight for depth (not on accent key)
-        if (!isAction && colors.hasKeyBorders) {
-            line.color = 0x14FFFFFF
-            line.strokeWidth = 1f * d
-            canvas.drawLine(l + cut + 1.5f * d, t + 1.5f * d, r - 2f * d, t + 1.5f * d, line)
-        }
-
-        // caps lock indicator: solid bar at the bottom
+        // caps lock indicator: short rounded bar at the bottom
         if (shiftState == 2) {
             block.color = p.accent
-            val bw = (r - l) * 0.34f
+            val bw = min(14f * d, (r - l) * 0.3f)
             val cx = (l + r) / 2f
-            canvas.drawRect(cx - bw / 2f, b - 3.2f * d, cx + bw / 2f, b - 1.4f * d, block)
+            canvas.drawRoundRect(cx - bw / 2f, b - 4f * d, cx + bw / 2f, b - 2.4f * d, 1f * d, 1f * d, block)
         }
 
         if (!colors.techDecor || fx <= 0f) return
+        // optional, deliberately quiet decorations
         when {
-            isAction -> {
-                // three hazard stripes on the lower-left
-                line.color = ColorUtils.setAlphaComponent(p.onAccent, 0x66)
-                line.strokeWidth = 1.4f * d
-                val s = 4f * d
-                for (i in 0..2) {
-                    val x0 = l + 4f * d + i * s
-                    canvas.drawLine(x0, b - 3f * d, x0 + s * 0.7f, b - 3f * d - s * 0.9f, line)
-                }
-            }
             isFunctional -> {
-                // teal corner tick at the top-right
-                line.color = ColorUtils.setAlphaComponent(p.teal, if (p.technical) 0xE0 else 0xA0)
-                line.strokeWidth = 1.3f * d
-                val len = min(6f * d, (r - l) * 0.2f)
-                canvas.drawLine(r - len - 2f * d, t + 2.2f * d, r - 2.2f * d, t + 2.2f * d, line)
-                canvas.drawLine(r - 2.2f * d, t + 2.2f * d, r - 2.2f * d, t + len + 2f * d, line)
+                block.color = ColorUtils.setAlphaComponent(p.teal, 0x90)
+                canvas.drawCircle(r - 4.5f * d, t + 4.5f * d, 1.3f * d, block)
             }
             isSpace -> {
-                // centered yellow track with teal end markers
                 val cx = (l + r) / 2f
-                val tw = max(24f * d, (r - l) * 0.22f)
-                line.color = ColorUtils.setAlphaComponent(p.accent, 0xB0)
-                line.strokeWidth = 1.6f * d
-                canvas.drawLine(cx - tw / 2f, b - 3.5f * d, cx + tw / 2f, b - 3.5f * d, line)
-                block.color = ColorUtils.setAlphaComponent(p.teal, 0xC0)
-                canvas.drawRect(l + 5f * d, b - 5f * d, l + 8f * d, b - 2.5f * d, block)
-                canvas.drawRect(r - 8f * d - cut, b - 5f * d, r - 5f * d - cut, b - 2.5f * d, block)
-            }
-            p.technical -> {
-                // netrunner: tiny technical line on the bottom-left of letter keys
-                line.color = ColorUtils.setAlphaComponent(p.teal, 0x50)
-                line.strokeWidth = 1f * d
-                canvas.drawLine(l + 2.5f * d, b - 2.5f * d, l + 2.5f * d + min(7f * d, (r - l) * 0.25f), b - 2.5f * d, line)
+                val tw = max(18f * d, (r - l) * 0.12f)
+                line.color = ColorUtils.setAlphaComponent(p.accent, 0x70)
+                line.strokeWidth = 1.4f * d
+                line.strokeCap = Paint.Cap.ROUND
+                canvas.drawLine(cx - tw / 2f, b - 4f * d, cx + tw / 2f, b - 4f * d, line)
             }
         }
     }

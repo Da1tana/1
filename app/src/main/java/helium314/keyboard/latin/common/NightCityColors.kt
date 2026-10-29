@@ -67,64 +67,64 @@ class NightCityPalette(
 
         val NIGHT_CITY_PALETTE = NightCityPalette(
             id = NIGHT_CITY,
-            panel = 0xFF0D1116.toInt(),
-            base = 0xFF080B0E.toInt(),
-            key = 0xFF171D23.toInt(),
-            keySecondary = 0xFF202830.toInt(),
-            spaceBar = 0xFF171D23.toInt(),
+            panel = 0xFF12171C.toInt(),
+            base = 0xFF0C0F13.toInt(),
+            key = 0xFF1F262D.toInt(),
+            keySecondary = 0xFF171D23.toInt(),
+            spaceBar = 0xFF1F262D.toInt(),
             accent = 0xFFF5C542.toInt(),
-            accentBright = 0xFFFFE36E.toInt(),
+            accentBright = 0xFFFFD966.toInt(),
             teal = 0xFF35E6D0.toInt(),
-            keyText = 0xFFF5C542.toInt(),
-            functionalText = 0xFFE9EEF2.toInt(),
-            hintText = 0xFFA3ADB6.toInt(),
-            border = 0xFF34414A.toInt(),
+            keyText = 0xFFE9ECEF.toInt(),
+            functionalText = 0xFFAEB7BF.toInt(),
+            hintText = 0xFF7C8791.toInt(),
+            border = 0xFF2B343C.toInt(),
             onAccent = 0xFF080B0E.toInt(),
             pressAccent = 0xFFF5C542.toInt(),
             pressAccentFunctional = 0xFF35E6D0.toInt(),
-            glow = 0.8f,
+            glow = 0.6f,
             technical = false,
         )
 
         val AFTERLIFE_PALETTE = NightCityPalette(
             id = AFTERLIFE,
-            panel = 0xFF07090B.toInt(),
-            base = 0xFF020304.toInt(),
-            key = 0xFF111519.toInt(),
-            keySecondary = 0xFF171C21.toInt(),
-            spaceBar = 0xFF111519.toInt(),
+            panel = 0xFF0B0D0F.toInt(),
+            base = 0xFF070809.toInt(),
+            key = 0xFF181C20.toInt(),
+            keySecondary = 0xFF121518.toInt(),
+            spaceBar = 0xFF181C20.toInt(),
             accent = 0xFFD9B24A.toInt(),
             accentBright = 0xFFEACB6B.toInt(),
             teal = 0xFF2FC9B6.toInt(),
-            keyText = 0xFFE6DFC8.toInt(),
-            functionalText = 0xFFD9B24A.toInt(),
-            hintText = 0xFF7E8892.toInt(),
-            border = 0xFF1F272D.toInt(),
+            keyText = 0xFFDDD9CE.toInt(),
+            functionalText = 0xFF979DA3.toInt(),
+            hintText = 0xFF6B7278.toInt(),
+            border = 0xFF22282D.toInt(),
             onAccent = 0xFF050607.toInt(),
             pressAccent = 0xFFD9B24A.toInt(),
             pressAccentFunctional = 0xFF2FC9B6.toInt(),
-            glow = 0.45f,
+            glow = 0.4f,
             technical = false,
         )
 
         val NETRUNNER_PALETTE = NightCityPalette(
             id = NETRUNNER,
-            panel = 0xFF071116.toInt(),
-            base = 0xFF04080B.toInt(),
-            key = 0xFF0E1A20.toInt(),
-            keySecondary = 0xFF13252D.toInt(),
-            spaceBar = 0xFF0E1A20.toInt(),
+            panel = 0xFF0C151A.toInt(),
+            base = 0xFF080E11.toInt(),
+            key = 0xFF16242B.toInt(),
+            keySecondary = 0xFF101B21.toInt(),
+            spaceBar = 0xFF16242B.toInt(),
             accent = 0xFFF5C542.toInt(),
             accentBright = 0xFFFFE36E.toInt(),
             teal = 0xFF35E6D0.toInt(),
-            keyText = 0xFF8FF5E8.toInt(),
-            functionalText = 0xFF35E6D0.toInt(),
-            hintText = 0xFF5FA9A1.toInt(),
-            border = 0xFF1D4A4A.toInt(),
+            keyText = 0xFFD3F5F0.toInt(),
+            functionalText = 0xFF74D6CA.toInt(),
+            hintText = 0xFF5C8B87.toInt(),
+            border = 0xFF1F3A3D.toInt(),
             onAccent = 0xFF061014.toInt(),
             pressAccent = 0xFF35E6D0.toInt(),
             pressAccentFunctional = 0xFFF5C542.toInt(),
-            glow = 1f,
+            glow = 0.7f,
             technical = true,
         )
 
@@ -175,7 +175,7 @@ class NightCityColors(
         palette.spaceBar,
         palette.keyText,
         palette.hintText,
-        suggestionText = palette.functionalText,
+        suggestionText = palette.keyText,
         spaceBarText = ColorUtils.setAlphaComponent(palette.hintText, 0xB0),
         gesture = palette.teal,
         keyboardBackground = keyboardBackgroundImage,
@@ -193,10 +193,11 @@ class NightCityColors(
         POPUP_KEY_ICON -> palette.functionalText
         KEY_HINT_TEXT -> palette.hintText
         GESTURE_TRAIL -> palette.teal
-        GESTURE_PREVIEW, POPUP_KEYS_BACKGROUND, KEY_PREVIEW_BACKGROUND, MORE_SUGGESTIONS_BACKGROUND -> palette.keySecondary
+        GESTURE_PREVIEW, POPUP_KEYS_BACKGROUND, KEY_PREVIEW_BACKGROUND, MORE_SUGGESTIONS_BACKGROUND -> palette.key
         SUGGESTION_AUTO_CORRECT -> palette.accent
-        SUGGESTION_TYPED_WORD -> palette.teal
-        SUGGESTED_WORD, SUGGESTION_VALID_WORD, MORE_SUGGESTIONS_HINT -> palette.functionalText
+        SUGGESTION_TYPED_WORD -> palette.functionalText
+        SUGGESTED_WORD, SUGGESTION_VALID_WORD -> palette.keyText
+        MORE_SUGGESTIONS_HINT -> palette.functionalText
         EMOJI_CATEGORY_SELECTED, CLIPBOARD_PIN, TOOL_BAR_KEY_ENABLED_BACKGROUND -> palette.accent
         MAIN_BACKGROUND, STRIP_BACKGROUND, MORE_SUGGESTIONS_WORD_BACKGROUND -> palette.panel
         NAVIGATION_BAR -> palette.base
@@ -223,9 +224,9 @@ class NightCityColors(
     override fun setBackground(view: View, color: ColorType) {
         val res = view.resources
         when (color) {
-            KEY_PREVIEW_BACKGROUND -> view.background = CyberPanelDrawable(res, palette, palette.keySecondary, palette.accent, fxFactor, accentEdge = true)
+            KEY_PREVIEW_BACKGROUND -> view.background = CyberPanelDrawable(res, palette, palette.key, palette.border, fxFactor, accentEdge = false)
             POPUP_KEYS_BACKGROUND, MORE_SUGGESTIONS_BACKGROUND ->
-                view.background = CyberPanelDrawable(res, palette, palette.keySecondary, palette.border, fxFactor, accentEdge = true)
+                view.background = CyberPanelDrawable(res, palette, palette.key, palette.border, fxFactor, accentEdge = false)
             MAIN_BACKGROUND -> {
                 if (keyboardBackgroundImage != null) base.setBackground(view, color)
                 else view.background = CyberBackdropDrawable(res, palette, techDecor && fxFactor > 0f)
@@ -258,7 +259,7 @@ class CyberPanelDrawable(
     private val density = res.displayMetrics.density
     private val fillPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply { style = Paint.Style.FILL; color = fill }
     private val strokePaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-        style = Paint.Style.STROKE; strokeWidth = 1.2f * density; color = stroke
+        style = Paint.Style.STROKE; strokeWidth = 1f * density; color = stroke
     }
     private val accentPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
         style = Paint.Style.STROKE; strokeWidth = 2f * density; color = palette.teal; strokeCap = Paint.Cap.SQUARE
@@ -274,17 +275,20 @@ class CyberPanelDrawable(
         if (b.isEmpty) return
         val inset = 1f * density
         val l = b.left + inset; val t = b.top + inset; val r = b.right - inset; val btm = b.bottom - inset
-        val cut = min(10f * density, min(r - l, btm - t) * 0.22f)
+        val rad = min(10f * density, min(r - l, btm - t) * 0.25f)
+        val cut = min(5f * density, min(r - l, btm - t) * 0.15f)
         path.reset()
         path.moveTo(l + cut, t)
-        path.lineTo(r, t)
-        path.lineTo(r, btm - cut)
-        path.lineTo(r - cut, btm)
-        path.lineTo(l, btm)
+        path.lineTo(r - rad, t)
+        path.quadTo(r, t, r, t + rad)
+        path.lineTo(r, btm - rad)
+        path.quadTo(r, btm, r - rad, btm)
+        path.lineTo(l + rad, btm)
+        path.quadTo(l, btm, l, btm - rad)
         path.lineTo(l, t + cut)
         path.close()
         canvas.drawPath(path, fillPaint)
-        if (fxFactor > 0f) canvas.drawPath(path, glowPaint)
+        if (fxFactor > 1f) canvas.drawPath(path, glowPaint)
         canvas.drawPath(path, strokePaint)
         if (accentEdge) {
             // short teal bracket on the top-left cut
@@ -319,16 +323,16 @@ class CyberBackdropDrawable(res: Resources, private val palette: NightCityPalett
         }
         canvas.drawRect(b, paint)
         // top hairline
-        linePaint.color = ColorUtils.setAlphaComponent(palette.border, 0xFF)
+        linePaint.color = ColorUtils.setAlphaComponent(palette.border, 0x90)
         canvas.drawLine(b.left.toFloat(), b.top + 0.5f * density, b.right.toFloat(), b.top + 0.5f * density, linePaint)
         if (decor) {
             // accent segment at the top-left, teal tick at the top-right
-            linePaint.color = palette.accent
-            linePaint.strokeWidth = 2f * density
-            val segment = b.width() * 0.18f
+            linePaint.color = ColorUtils.setAlphaComponent(palette.accent, 0x99)
+            linePaint.strokeWidth = 1.5f * density
+            val segment = b.width() * 0.08f
             canvas.drawLine(b.left.toFloat(), b.top + 1f * density, b.left + segment, b.top + 1f * density, linePaint)
-            linePaint.color = palette.teal
-            canvas.drawLine(b.right - 28f * density, b.top + 1f * density, b.right - 12f * density, b.top + 1f * density, linePaint)
+            linePaint.color = ColorUtils.setAlphaComponent(palette.teal, 0x99)
+            canvas.drawLine(b.right - 22f * density, b.top + 1f * density, b.right - 12f * density, b.top + 1f * density, linePaint)
             linePaint.strokeWidth = 1f * density
         }
     }
