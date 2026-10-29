@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- SPDX-License-Identifier: GPL-3.0-only -->
+<resources>
+    <color name="nc_base">#080B0E</color>
+    <color name="nc_panel">#0D1116</color>
+    <color name="nc_key">#171D23</color>
+    <color name="nc_key_secondary">#202830</color>
+    <color name="nc_accent">#F5C542</color>
+    <color name="nc_accent_bright">#FFE36E</color>
+    <color name="nc_teal">#35E6D0</color>
+    <color name="nc_text">#E9EEF2</color>
+    <color name="nc_text_secondary">#A3ADB6</color>
+    <color name="nc_border">#34414A</color>
+</resources>

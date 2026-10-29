@@ -79,10 +79,10 @@ fun WelcomeWizard(
             }
     }
     val useWideLayout = isWideScreen()
-    val stepBackgroundColor = Color(ContextCompat.getColor(ctx, R.color.setup_step_background))
-    val textColor = Color(ContextCompat.getColor(ctx, R.color.setup_text_action))
+    val stepBackgroundColor = Color(ContextCompat.getColor(ctx, R.color.nc_key))
+    val textColor = Color(ContextCompat.getColor(ctx, R.color.nc_accent))
     val textColorDim = textColor.copy(alpha = 0.5f)
-    val titleColor = Color(ContextCompat.getColor(ctx, R.color.setup_text_title))
+    val titleColor = Color(ContextCompat.getColor(ctx, R.color.nc_teal))
     val appName = stringResource(ctx.applicationInfo.labelRes)
     @Composable fun bigText() {
         val resource = if (step == 0) R.string.setup_welcome_title else R.string.setup_steps_title

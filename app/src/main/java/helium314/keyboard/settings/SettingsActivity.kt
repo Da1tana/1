@@ -155,7 +155,11 @@ open class SettingsActivity : ComponentActivity(), SharedPreferences.OnSharedPre
             intent = null
         }
 
-        enableEdgeToEdge()
+        // Night City UI is always dark, so always use light system bar icons
+        enableEdgeToEdge(
+            statusBarStyle = androidx.activity.SystemBarStyle.dark(android.graphics.Color.TRANSPARENT),
+            navigationBarStyle = androidx.activity.SystemBarStyle.dark(android.graphics.Color.TRANSPARENT),
+        )
     }
 
     override fun onStart() {

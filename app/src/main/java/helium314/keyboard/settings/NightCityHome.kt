@@ -363,8 +363,8 @@ private fun DrawScope.previewKey(
         }
     }
     val color = when (type) { 3 -> p.onAccent; 2 -> p.functionalText; 4 -> p.hintText; else -> p.keyText }
-    val size = when (type) { 4 -> 10.sp; 2 -> if (label.length > 2) 10.sp else 15.sp; else -> 15.sp }
-    val layout = measurer.measure(label, TextStyle(color = color.c(), fontSize = size, fontWeight = if (type == 1) FontWeight.Medium else FontWeight.Normal))
+    val fontSize = when (type) { 4 -> 10.sp; 2 -> if (label.length > 2) 10.sp else 15.sp; else -> 15.sp }
+    val layout = measurer.measure(label, TextStyle(color = color.c(), fontSize = fontSize, fontWeight = if (type == 1) FontWeight.Medium else FontWeight.Normal))
     drawText(layout, topLeft = Offset((l + r - layout.size.width) / 2f, (t + b - layout.size.height) / 2f))
 }
 
