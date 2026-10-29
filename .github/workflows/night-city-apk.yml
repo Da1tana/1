@@ -71,7 +71,26 @@ jobs:
       - name: Unit tests (Robolectric)
         run: |
           chmod +x gradlew
-          ./gradlew testRunTestsUnitTest
+          set -o pipefail
+          ./gradlew testRunTestsUnitTest --continue 2>&1 | tee test-output.txt
+      - name: Report failures as annotations
+        if: ${{ failure() }}
+        run: |
+          : > report.txt
+          for f in $(find app/build/test-results -name "*.xml" 2>/dev/null); do
+            python3 - "$f" >> report.txt <<'PY'
+          import sys, xml.etree.ElementTree as ET
+          t = ET.parse(sys.argv[1]).getroot()
+          for tc in t.iter('testcase'):
+              for fl in list(tc.findall('failure')) + list(tc.findall('error')):
+                  msg = (fl.get('message') or (fl.text or '')[:400]).replace('\n', ' ')[:500]
+                  print(f"TEST {tc.get('classname')}.{tc.get('name')}: {msg}")
+          PY
+          done
+          grep -A20 "What went wrong" test-output.txt | head -60 >> report.txt || true
+          grep -E "^e: |error:|tests completed|FAILED" test-output.txt | head -60 >> report.txt || true
+          head -c 40000 report.txt > r2.txt
+          echo "::error title=Unit test report::$(sed ':a;N;$!ba;s/%/%25/g;s/\r//g;s/\n/%0A/g' r2.txt)"
       - name: Test reports
         uses: actions/upload-artifact@v4
         with:
