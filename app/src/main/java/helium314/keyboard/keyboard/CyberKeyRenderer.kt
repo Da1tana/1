@@ -103,7 +103,7 @@ class CyberKeyRenderer(val colors: NightCityColors, density: Float) {
         val drawBorder = !isAction && (colors.hasKeyBorders || shiftState > 0 || (pressed && fx > 0f))
         if (drawBorder && (!transparentBase || pressed)) {
             stroke.color = borderColor
-            stroke.strokeWidth = (if (shiftState > 0) 1.3f else 1f) * d
+            stroke.strokeWidth = (if (shiftState > 0) 1.3f else 0.8f) * d
             canvas.drawPath(path, stroke)
         }
 

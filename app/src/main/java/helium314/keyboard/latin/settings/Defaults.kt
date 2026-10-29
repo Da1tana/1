@@ -49,7 +49,7 @@ object Defaults {
     const val PREF_ACCENT_SHIFTED_ICON = false
     const val PREF_THEME_COLORS = KeyboardTheme.THEME_NIGHT_CITY
     const val PREF_THEME_COLORS_NIGHT = KeyboardTheme.THEME_NIGHT_CITY
-    const val PREF_THEME_KEY_BORDERS = false
+    const val PREF_THEME_KEY_BORDERS = true
     // Night City Keyboard
     const val PREF_NC_ANIMATIONS = true
     const val PREF_NC_EFFECT_LEVEL = "standard"

@@ -346,7 +346,7 @@ private fun DrawScope.previewKey(
     val fill = when (type) { 2 -> p.keySecondary; 3 -> p.accent; 4 -> p.spaceBar; else -> p.key }
     drawPath(path, fill.c())
     if (borders && type != 3)
-        drawPath(path, p.border.c(), style = Stroke(1.dp.toPx()))
+        drawPath(path, p.border.c(), style = Stroke(0.8.dp.toPx()))
     if (decor) {
         when (type) {
             2 -> drawCircle(p.teal.c().copy(alpha = 0.55f), 1.3.dp.toPx(), Offset(r - 4.5.dp.toPx(), t + 4.5.dp.toPx()))
